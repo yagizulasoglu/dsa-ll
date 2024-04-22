@@ -106,6 +106,10 @@ class LLStr {
     if(this.length === 0) {
       throw new IndexError;
     }
+
+    if(this.length === 1) {
+      this.tail = null;
+    }
     let current = this.head!;
     this.head = current.next!;
 
@@ -162,23 +166,28 @@ class LLStr {
    **/
 
   insertAt(idx: number, val: string): void {
-    if(idx >= this.length || idx < 0) {
+    if(idx > this.length || idx < 0) {
       throw new IndexError;
     }
     if(idx === 0) {
       return this.unshift(val);
     }
-    const newNode = new NodeStr(val);
+    if(idx === this.length) {
+      return this.push(val);
+    }
+
+    const newNode = new NodeStr(val);  // "1"
     let count = 0;
-    let current = this.head;
+    let current = this.head;         // a, next: b
     while(current !== null) {
-      if(count + 1 === idx) {
-        newNode.next = current.next;
+      if(count + 1 === idx) {        // 1 === idx (1)
+        newNode.next = current.next; //
         current.next = newNode;
       }
       count++;
       current = current.next;
     }
+    this.length++;
   }
 
   /** removeAt(idx): return & remove item at idx,
@@ -193,24 +202,29 @@ class LLStr {
     let count = 0;
     let current = this.head;
     let value = current!;
-    if (idx === 0) {
+    if (idx === 0) {  // []
       let value = this.head!;
-      this.head === this.head?.next;
+      this.head = this.head!.next;
+      if (this.length === 1) {
+        this.tail = null;
+      }
+      this.length--;
       return value.val;
     }
     while(current !== null) {
-      if(count + 1 === idx) {
-        let next = current.next!;
-        if (next === this.tail) {
-          this.tail === current;
+      if(count + 1 === idx) {   // count = 0, 1 === 1
+        let next = current.next!; // "d"
+        if (next === this.tail) {  // true
+          this.tail = current;   // tail = b
         }
-        value = next;
-        current.next = next.next;
+        value = next;                // value = d
+        current.next = next.next;    // null
       }
-      count++;
-      current = current.next;
+      count++;                   // 1
+      current = current.next;    // null
     }
-    return value.val;
+    this.length--;               //  1
+    return value.val;            // d
   }
 
   /** toArray (useful for tests!) */
